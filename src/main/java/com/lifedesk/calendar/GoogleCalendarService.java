@@ -112,7 +112,12 @@ public class GoogleCalendarService {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         LocalDateTime startTime = request.startTime();
-        LocalDateTime endTime = startTime.plusDays(1);
+        LocalDateTime endTime = request.endTime();
+        if (!endTime.isAfter(startTime)) {
+            throw new IllegalArgumentException(
+                    "End time must be after start time"
+            );
+        }
 
         Event event = new Event()
                 .setSummary(request.title())
