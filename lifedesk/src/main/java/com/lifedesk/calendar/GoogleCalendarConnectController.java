@@ -1,5 +1,6 @@
 package com.lifedesk.calendar;
 
+import com.lifedesk.config.AppUrlConfig;
 import com.lifedesk.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -16,9 +17,11 @@ import java.util.Map;
 public class GoogleCalendarConnectController {
     public static final String CALENDAR_LINK_USER_EMAIL= "CALENDAR_LINK_USER_EMAIL";
     private final JwtService jwtService;
+    private final AppUrlConfig appUrlConfig;
 
-    public GoogleCalendarConnectController(JwtService jwtService) {
+    public GoogleCalendarConnectController(JwtService jwtService, AppUrlConfig appUrlConfig) {
         this.jwtService = jwtService;
+        this.appUrlConfig = appUrlConfig;
     }
 
     @PostMapping("/connect/start")
@@ -41,7 +44,7 @@ public class GoogleCalendarConnectController {
 
             return ResponseEntity.ok(Map.of(
                     "authorizationUrl",
-                    "http://localhost:8080/oauth2/authorization/google-calendar"
+                    appUrlConfig.getBackendUrl()+"/oauth2/authorization/google-calendar"
             ));
         }
         catch (Exception e){

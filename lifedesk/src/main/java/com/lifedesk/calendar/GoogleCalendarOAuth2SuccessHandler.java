@@ -1,6 +1,7 @@
 package com.lifedesk.calendar;
 
 import com.lifedesk.calendar.GoogleCalendarCredentialRepository;
+import com.lifedesk.config.AppUrlConfig;
 import com.lifedesk.user.User;
 import com.lifedesk.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,15 +26,17 @@ public class GoogleCalendarOAuth2SuccessHandler
     private final UserRepository userRepository;
     private final GoogleCalendarCredentialRepository credentialRepository;
     private final OAuth2AuthorizedClientService authorizedClientService;
+    private final AppUrlConfig appUrlConfig;
 
     public GoogleCalendarOAuth2SuccessHandler(
             UserRepository userRepository,
             GoogleCalendarCredentialRepository credentialRepository,
-            OAuth2AuthorizedClientService authorizedClientService) {
+            OAuth2AuthorizedClientService authorizedClientService, AppUrlConfig appUrlConfig) {
 
         this.userRepository = userRepository;
         this.credentialRepository = credentialRepository;
         this.authorizedClientService = authorizedClientService;
+        this.appUrlConfig = appUrlConfig;
     }
 
     @Override
@@ -150,7 +153,7 @@ public class GoogleCalendarOAuth2SuccessHandler
         getRedirectStrategy().sendRedirect(
                 request,
                 response,
-                "http://localhost:5173/?calendar=" + status
+                appUrlConfig.getFrontendUrl() +"/?calendar=" + status
         );
     }
 }

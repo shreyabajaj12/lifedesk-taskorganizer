@@ -2,6 +2,7 @@ package com.lifedesk.security;
 
 import com.lifedesk.calendar.GoogleCalendarAuthorizationRequestResolver;
 import com.lifedesk.calendar.GoogleCalendarOAuth2SuccessHandler;
+import com.lifedesk.config.AppUrlConfig;
 import com.resend.Resend;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -29,14 +30,16 @@ public class SecurityConfig {
     private final GoogleCalendarOAuth2SuccessHandler calendarSuccessHandler;
     private final GoogleCalendarAuthorizationRequestResolver
             calendarAuthorizationRequestResolver;
+    private final AppUrlConfig appUrlConfig;
     private static final Logger log =
             LoggerFactory.getLogger(SecurityConfig.class);
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, OAuth2SuccessHandler oAuth2SuccessHandler, GoogleCalendarOAuth2SuccessHandler calendarSuccessHandler, GoogleCalendarAuthorizationRequestResolver calendarAuthorizationRequestResolver) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, OAuth2SuccessHandler oAuth2SuccessHandler, GoogleCalendarOAuth2SuccessHandler calendarSuccessHandler, GoogleCalendarAuthorizationRequestResolver calendarAuthorizationRequestResolver, AppUrlConfig appUrlConfig) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.calendarSuccessHandler = calendarSuccessHandler;
         this.calendarAuthorizationRequestResolver = calendarAuthorizationRequestResolver;
+        this.appUrlConfig = appUrlConfig;
     }
 
     @Bean
@@ -73,7 +76,7 @@ public class SecurityConfig {
                                             exception
                                     );
 
-                                    response.sendRedirect("http://localhost:5173/?calendar=oauth_error");
+                                    response.sendRedirect( appUrlConfig.getFrontendUrl() +"/?calendar=oauth_error");
                                 })
                 )
                 .addFilterBefore(
@@ -86,7 +89,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration =new CorsConfiguration();
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+                List.of(appUrlConfig.getFrontendUrl())
         );
         configuration.setAllowedMethods(
                 List.of("GET","POST","PUT","DELETE","OPTIONS")

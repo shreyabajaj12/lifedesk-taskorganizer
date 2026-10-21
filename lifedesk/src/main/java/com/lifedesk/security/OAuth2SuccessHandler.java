@@ -1,6 +1,7 @@
 package com.lifedesk.security;
 
 import com.lifedesk.common.Provider;
+import com.lifedesk.config.AppUrlConfig;
 import com.lifedesk.user.User;
 import com.lifedesk.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,12 +21,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final AppUrlConfig appUrlConfig;
 
 
-    public OAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
+    public OAuth2SuccessHandler(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder, AppUrlConfig appUrlConfig) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
+        this.appUrlConfig = appUrlConfig;
     }
 
     public void onAuthenticationSuccess(HttpServletRequest request
@@ -52,7 +55,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         System.out.println("TOKEN GENERATED");
 
         String redirectUrl =
-                "http://localhost:5173/oauth2/success?token=" + token;
+                appUrlConfig.getFrontendUrl()+"/oauth2/success?token=" + token;
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);    }
 }
